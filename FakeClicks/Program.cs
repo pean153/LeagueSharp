@@ -64,21 +64,21 @@ namespace FakeClicks
                     }
                     break;
                 case Orbwalking.OrbwalkingMode.LaneClear:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > 300)
+                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
                     {
                         VirtualMouse.clickdelay = Environment.TickCount;
                         VirtualMouse.RightClick();
                     }
                     break;
                 case Orbwalking.OrbwalkingMode.Mixed:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > 300)
+                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
                     {
                         VirtualMouse.clickdelay = Environment.TickCount;
                         VirtualMouse.RightClick();
                     }
                     break;
                 case Orbwalking.OrbwalkingMode.LastHit:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > 300)
+                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
                     {
                         VirtualMouse.clickdelay = Environment.TickCount;
                         VirtualMouse.RightClick();
