@@ -88,7 +88,6 @@ namespace FakeClicks
                     clckdelay = Utils.TickCount;
                     VirtualMouse.RightClick();
                 }
-                
             }
             else
             {
