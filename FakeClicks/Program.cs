@@ -1,8 +1,7 @@
-﻿#region
+#region
 
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -12,27 +11,15 @@ using Color = System.Drawing.Color;
 
 namespace FakeClicks
 {
-    class Program
+    class FakeClick
     {
-        public static class VirtualMouse
-        {
-            // import the necessary API function so .NET can marshall parameters appropriately
-            [DllImport("user32.dll")]
-            static extern void mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
-            //data
-            private const int MOUSEEVENTF_RIGHTDOWN = 0x0008;
-            private const int MOUSEEVENTF_RIGHTUP = 0x0010;
-            // simulates a click-and-release action of the right mouse button at its current position
-            public static void RightClick()
-            {
-                mouse_event(MOUSEEVENTF_RIGHTDOWN, Control.MousePosition.X, Control.MousePosition.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_RIGHTUP, Control.MousePosition.X, Control.MousePosition.Y, 0, 0);
-            }
-            public static int clickdelay = 0;
-
-        }
+        
         public static LeagueSharp.Common.Menu _menu;
-        public static Orbwalking.Orbwalker _orbwalker;
+        private static Obj_AI_Hero Player
+        {
+            get { return ObjectManager.Player; }
+        }
+
         static void Main(string[] args)
         {
             CustomEvents.Game.OnGameLoad += Game_OnGameLoad;
@@ -41,49 +28,45 @@ namespace FakeClicks
         static void Game_OnGameLoad(EventArgs args)
         {
             Game.OnGameUpdate += Game_OnGameUpdate;
-            _menu = new LeagueSharp.Common.Menu("Fake Clicks", "fakeClicks", true);
-            _menu.AddItem(new LeagueSharp.Common.MenuItem("clickEnable", "Enable").SetValue(true));
-            _menu.AddSubMenu(new LeagueSharp.Common.Menu("Orbwalking", "Orbwalking"));
-            _orbwalker = new Orbwalking.Orbwalker(_menu.SubMenu("Orbwalking"));
-            _menu.AddItem(new LeagueSharp.Common.MenuItem("clickDelay", "Click Delay").SetValue(new Slider(200, 0, 2000)));
-            _menu.AddItem(new LeagueSharp.Common.MenuItem("randomDelay", "Random Delay").SetValue(new Slider(100, 0, 500)));
+            _menu = new Menu("Fake Clicks", "fakeClicks", true);
+            _menu.AddSubMenu(new Menu("Keybinds", "keybinds"));
+            _menu.SubMenu("keybinds").AddSubMenu(new Menu("Key One", "keyone"));
+            _menu.SubMenu("keybinds").SubMenu("keyone").AddItem(new MenuItem("enbone", "Enable this key").SetValue(true));
+            _menu.SubMenu("keybinds").SubMenu("keyone").AddItem(new MenuItem("clckone", "Key One").SetValue(new KeyBind(32, KeyBindType.Press)));
+            _menu.SubMenu("keybinds").AddSubMenu(new Menu("Key Two", "keytwo"));
+            _menu.SubMenu("keybinds").SubMenu("keytwo").AddItem(new MenuItem("enbtwo", "Enable this key").SetValue(true));
+            _menu.SubMenu("keybinds").SubMenu("keytwo").AddItem(new MenuItem("clcktwo", "Key Two").SetValue(new KeyBind('C', KeyBindType.Press)));
+            _menu.SubMenu("keybinds").AddSubMenu(new Menu("Key Three", "keythree"));
+            _menu.SubMenu("keybinds").SubMenu("keythree").AddItem(new MenuItem("enbthree", "Enable this key").SetValue(true));
+            _menu.SubMenu("keybinds").SubMenu("keythree").AddItem(new MenuItem("clckthree", "Key Three").SetValue(new KeyBind('V', KeyBindType.Press)));
+            _menu.SubMenu("keybinds").AddSubMenu(new Menu("Key Four", "keyfour"));
+            _menu.SubMenu("keybinds").SubMenu("keyfour").AddItem(new MenuItem("enbfour", "Enable this key").SetValue(true));
+            _menu.SubMenu("keybinds").SubMenu("keyfour").AddItem(new MenuItem("clckfour", "Key Four").SetValue(new KeyBind('X', KeyBindType.Press)));
+            _menu.AddItem(new MenuItem("clickEnable", "Enable").SetValue(true));
+            _menu.AddItem(new MenuItem("clickDelay", "Click Delay").SetValue(new Slider(200, 20, 2000)));
+            _menu.AddItem(new MenuItem("randomDelay", "Random Modifier").SetValue(new Slider(100, 0, 1000)));
             _menu.AddToMainMenu();
  
         }
+        private static int clckdelay;
         static void Game_OnGameUpdate(EventArgs args)
         {
-            var r = new Random();
-            int rng = r.Next(0, _menu.Item("randomDelay").GetValue<Slider>().Value);
-            switch (_orbwalker.ActiveMode)
+            if (Player.IsDead)
+                return;
+
+            if (_menu.Item("clickEnable").GetValue<bool>())
             {
-                case Orbwalking.OrbwalkingMode.Combo:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
-                    {
-                        VirtualMouse.clickdelay = Environment.TickCount;
-                        VirtualMouse.RightClick();
-                    }
-                    break;
-                case Orbwalking.OrbwalkingMode.LaneClear:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
-                    {
-                        VirtualMouse.clickdelay = Environment.TickCount;
-                        VirtualMouse.RightClick();
-                    }
-                    break;
-                case Orbwalking.OrbwalkingMode.Mixed:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
-                    {
-                        VirtualMouse.clickdelay = Environment.TickCount;
-                        VirtualMouse.RightClick();
-                    }
-                    break;
-                case Orbwalking.OrbwalkingMode.LastHit:
-                    if (Orbwalking.CanMove(_menu.Item("ExtraWindup").GetValue<Slider>().Value) && _menu.Item("clickEnable").GetValue<bool>() && !Orbwalking.DisableNextAttack && Environment.TickCount - VirtualMouse.clickdelay > _menu.Item("ExtraWindup").GetValue<Slider>().Value + _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
-                    {
-                        VirtualMouse.clickdelay = Environment.TickCount;
-                        VirtualMouse.RightClick();
-                    }
-                    break;
+                var r = new Random();
+                var rng = 10 * r.Next(0, _menu.Item("randomDelay").GetValue<Slider>().Value);
+                if (Player.IsMoving && !Player.IsWindingUp && !VirtualMouse.disableOrbClick && ((_menu.Item("enbone").GetValue<bool>() && _menu.Item("clckone").GetValue<KeyBind>().Active) || (_menu.Item("enbtwo").GetValue<bool>() && _menu.Item("clcktwo").GetValue<KeyBind>().Active) || (_menu.Item("enbthree").GetValue<bool>() && _menu.Item("clckthree").GetValue<KeyBind>().Active) || (_menu.Item("enbfour").GetValue<bool>() && _menu.Item("clckfour").GetValue<KeyBind>().Active)) && Environment.TickCount - clckdelay > _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
+                {
+                    clckdelay = Utils.TickCount;
+                    VirtualMouse.RightClick();
+                }
+            }
+            else
+            {
+                return;
             }
         }
     }
