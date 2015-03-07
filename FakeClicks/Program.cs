@@ -54,6 +54,11 @@ namespace FakeClicks
             if (Player.IsDead)
                 return;
 
+            if (Player.IsChannelingImportantSpell())
+            {
+                return;
+            }
+
             if (_menu.Item("clickEnable").GetValue<bool>())
             {
                 var r = new Random();
