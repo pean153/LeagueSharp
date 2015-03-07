@@ -42,6 +42,9 @@ namespace FakeClicks
             _menu.SubMenu("keybinds").AddSubMenu(new Menu("Key Four", "keyfour"));
             _menu.SubMenu("keybinds").SubMenu("keyfour").AddItem(new MenuItem("enbfour", "Enable this key").SetValue(true));
             _menu.SubMenu("keybinds").SubMenu("keyfour").AddItem(new MenuItem("clckfour", "Key Four").SetValue(new KeyBind('X', KeyBindType.Press)));
+            _menu.SubMenu("keybinds").AddSubMenu(new Menu("Key Five", "keyfive"));
+            _menu.SubMenu("keybinds").SubMenu("keyfive").AddItem(new MenuItem("enbfive", "Enable this key").SetValue(true));
+            _menu.SubMenu("keybinds").SubMenu("keyfive").AddItem(new MenuItem("clckfive", "Key Five").SetValue(new KeyBind('G', KeyBindType.Press)));
             _menu.AddItem(new MenuItem("clickEnable", "Enable").SetValue(true));
             _menu.AddItem(new MenuItem("clickDelay", "Click Delay").SetValue(new Slider(200, 20, 2000)));
             _menu.AddItem(new MenuItem("randomDelay", "Random Modifier").SetValue(new Slider(100, 0, 1000)));
@@ -63,7 +66,7 @@ namespace FakeClicks
             {
                 var r = new Random();
                 var rng = 10 * r.Next(0, _menu.Item("randomDelay").GetValue<Slider>().Value);
-                if (Player.IsMoving && !Player.IsWindingUp && !VirtualMouse.disableOrbClick && ((_menu.Item("enbone").GetValue<bool>() && _menu.Item("clckone").GetValue<KeyBind>().Active) || (_menu.Item("enbtwo").GetValue<bool>() && _menu.Item("clcktwo").GetValue<KeyBind>().Active) || (_menu.Item("enbthree").GetValue<bool>() && _menu.Item("clckthree").GetValue<KeyBind>().Active) || (_menu.Item("enbfour").GetValue<bool>() && _menu.Item("clckfour").GetValue<KeyBind>().Active)) && Environment.TickCount - clckdelay > _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
+                if (Player.IsMoving && !Player.IsWindingUp && !VirtualMouse.disableOrbClick && ((_menu.Item("enbone").GetValue<bool>() && _menu.Item("clckone").GetValue<KeyBind>().Active) || (_menu.Item("enbtwo").GetValue<bool>() && _menu.Item("clcktwo").GetValue<KeyBind>().Active) || (_menu.Item("enbthree").GetValue<bool>() && _menu.Item("clckthree").GetValue<KeyBind>().Active) || (_menu.Item("enbfour").GetValue<bool>() && _menu.Item("clckfour").GetValue<KeyBind>().Active) || (_menu.Item("enbfive").GetValue<bool>() && _menu.Item("clckfive").GetValue<KeyBind>().Active)) && Environment.TickCount - clckdelay > _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
                 {
                     clckdelay = Utils.TickCount;
                     VirtualMouse.RightClick();
