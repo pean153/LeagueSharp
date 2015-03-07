@@ -29,6 +29,7 @@ namespace FakeClicks
         {
             Game.OnGameUpdate += Game_OnGameUpdate;
             Orbwalking.OnAttack += Orbwalking_OnAttack;
+            Orbwalking.BeforeAttack += OrbwalkingBeforeAttack;
 
             _menu = new Menu("Fake Clicks", "fakeClicks", true);
             _menu.AddSubMenu(new Menu("Keybinds", "keybinds"));
@@ -52,6 +53,12 @@ namespace FakeClicks
             _menu.AddItem(new MenuItem("randomDelay", "Random Modifier").SetValue(new Slider(100, 0, 1000)));
             _menu.AddToMainMenu();
  
+        }
+
+        private static void OrbwalkingBeforeAttack(Orbwalking.BeforeAttackEventArgs args)
+        {
+            bouttoattacks = true;
+            onattackdelays = Utils.TickCount;
         }
 
         static void Orbwalking_OnAttack(AttackableUnit unit, AttackableUnit target)
