@@ -2,6 +2,7 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
@@ -59,18 +60,23 @@ namespace FakeClicks
             if (unit.IsMe)
             {
                 bouttoattacks = true;
-                testzs = Utils.TickCount;
+                onattackdelays = Utils.TickCount;
             }
         }
 
-        private static int testzs;
+        private static int onattackdelays;
+        private static int onwndupdelay;
         private static int clckdelay;
         private static bool bouttoattacks = false;
+        private static bool windinup = false;
 
         static void Game_OnGameUpdate(EventArgs args)
         {
-            if (bouttoattacks && Utils.TickCount - testzs > 100)
+            if (bouttoattacks && Utils.TickCount - onattackdelays > 100)
                 bouttoattacks = false;
+
+            if (windinup && Utils.TickCount - onwndupdelay > 300)
+                windinup = false;
 
             if (Player.IsDead)
                 return;
@@ -78,16 +84,22 @@ namespace FakeClicks
             if (Player.IsChannelingImportantSpell())
                 return;
 
+            if (Player.IsWindingUp)
+            {
+                onwndupdelay = Utils.TickCount;
+                windinup = true;
+            }
+
             if (_menu.Item("clickEnable").GetValue<bool>())
             {
                 var r = new Random();
                 var rng = 10 * r.Next(0, _menu.Item("randomDelay").GetValue<Slider>().Value);
                 
-                if (!bouttoattacks && Player.IsMoving && !Player.IsWindingUp && !VirtualMouse.disableOrbClick && ((_menu.Item("enbone").GetValue<bool>() && _menu.Item("clckone").GetValue<KeyBind>().Active) || (_menu.Item("enbtwo").GetValue<bool>() && _menu.Item("clcktwo").GetValue<KeyBind>().Active) || (_menu.Item("enbthree").GetValue<bool>() && _menu.Item("clckthree").GetValue<KeyBind>().Active) || (_menu.Item("enbfour").GetValue<bool>() && _menu.Item("clckfour").GetValue<KeyBind>().Active) || (_menu.Item("enbfive").GetValue<bool>() && _menu.Item("clckfive").GetValue<KeyBind>().Active)) && Utils.TickCount - clckdelay > _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
+                if (!bouttoattacks && Player.IsMoving && !windinup && !VirtualMouse.disableOrbClick && ((_menu.Item("enbone").GetValue<bool>() && _menu.Item("clckone").GetValue<KeyBind>().Active) || (_menu.Item("enbtwo").GetValue<bool>() && _menu.Item("clcktwo").GetValue<KeyBind>().Active) || (_menu.Item("enbthree").GetValue<bool>() && _menu.Item("clckthree").GetValue<KeyBind>().Active) || (_menu.Item("enbfour").GetValue<bool>() && _menu.Item("clckfour").GetValue<KeyBind>().Active) || (_menu.Item("enbfive").GetValue<bool>() && _menu.Item("clckfive").GetValue<KeyBind>().Active)) && Utils.TickCount - clckdelay > _menu.Item("clickDelay").GetValue<Slider>().Value + rng)
                 {
                     clckdelay = Utils.TickCount;
                     VirtualMouse.RightClick();
-                }
+                }               
             }
             else
             {
