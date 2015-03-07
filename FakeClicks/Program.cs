@@ -2,7 +2,6 @@
 
 using System;
 using System.Linq;
-using System.Threading;
 using System.Runtime.InteropServices;
 using LeagueSharp;
 using LeagueSharp.Common;
