@@ -27,7 +27,7 @@ namespace FakeClicks
 
         static void Game_OnGameLoad(EventArgs args)
         {
-            Game.OnGameUpdate += Game_OnGameUpdate;
+            Game.OnUpdate += Game_OnGameUpdate;
             Orbwalking.OnAttack += Orbwalking_OnAttack;
             Orbwalking.BeforeAttack += OrbwalkingBeforeAttack;
 
